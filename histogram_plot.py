@@ -13,14 +13,6 @@ import matplotlib.pyplot as PyPlot
 import matplotlib.ticker as ticker
 from matplotlib.font_manager import FontProperties
 
-#scriptName = os.path.splitext(os.path.basename(__file__))[0]
-#scriptID   = ' '.join([scriptName,damask.version])
-
-#parser = OptionParser(option_class=damask.extendableOption, usage='%prog options [file[s]]', description = """
-#Histogram Plots.
-#
-#""", version = scriptID)
-
 parser = argparse.ArgumentParser(description='Creating histograms')
 parser.add_argument('file',nargs='+',help='filename where the data lies')
 args = parser.parse_args()
@@ -36,6 +28,7 @@ for i in args.file:
     index_end    = data[header].split().index('6_resolvedstress_slip')
     #index_per_slip = data[header].split().index('basal_tau')
     resolved_stress_slip = np.loadtxt(i,skiprows=header+1,usecols=np.arange(index_start,index_end+1))
+    resolved_stress_slip = resolved_stress_slip/(1E6)
     print(np.shape(resolved_stress_slip))
     stacknum = index_end - index_start + 1
 
@@ -46,18 +39,20 @@ fig1,stacks=PyPlot.subplots(stacknum,1,sharex='all',sharey='all')
 fig1.set_figheight(10)
 
 for p in range(stacknum):
-    stacks[p].hist(resolved_stress_slip[:,p],edgecolor='black',label=str(p+1),color=next(colors))
+    dataname = data[header].split()[index_start + p]
+    stacks[p].hist(resolved_stress_slip[:,p],edgecolor='black',label=dataname,color=next(colors))
     stacks[p].legend()
 
 axes = PyPlot.gca()
 axes.set_ylim([0,len(resolved_stress_slip)])
 
-PyPlot.yticks(np.arange(0,len(resolved_stress_slip),50))
+#PyPlot.yticks(np.arange(0,len(resolved_stress_slip),50))
+axes.yaxis.set_major_locator(ticker.MultipleLocator(50))   #TODO: make ticks inside
+axes.yaxis.set_minor_locator(ticker.AutoMinorLocator(4))
+axes.xaxis.set_minor_locator(ticker.AutoMinorLocator(2))
 
-#stacks[1].hist(resolved_stress_slip[:,1],edgecolor='black')
-#    PyPlot.hist(resolved_stress_slip[:,0],edgecolor='black')
-#    PyPlot.title("Resolved Shear Stress distribution")
-#    PyPlot.xlabel(r'$\tau$')
+fig1.suptitle("Resolved Shear Stress distribution",verticalalignment="top",fontsize=22)
+PyPlot.xlabel(r'$\tau (MPa)$',fontsize=18)
 fig1.tight_layout()
 fig1.savefig('example.png')
 
