@@ -15,6 +15,7 @@ from matplotlib.font_manager import FontProperties
 
 parser = argparse.ArgumentParser(description='Creating histograms')
 parser.add_argument('file',nargs='+',help='filename where the data lies')
+parser.add_argument('-n',nargs='+',type=bool,help='create a normalised histogram',default=False)
 args = parser.parse_args()
 
 #args.file would contain the list of file names
@@ -32,8 +33,8 @@ for i in args.file:
     print(np.shape(resolved_stress_slip))
     stacknum = index_end - index_start + 1
 
-jet = PyPlot.get_cmap('jet')
-colors = iter(jet(np.linspace(0,1,stacknum)))
+color_map = PyPlot.get_cmap('gist_ncar')
+colors = iter(color_map(np.linspace(0,1,np.shape(resolved_stress_slip)[1])))
 
 fig1,stacks=PyPlot.subplots(stacknum,1,sharex='all',sharey='all')
 fig1.set_figheight(10)
