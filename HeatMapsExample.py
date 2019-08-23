@@ -9,20 +9,31 @@ Create heatmaps =)
 import os
 import numpy as np
 import matplotlib
+import argparse
 import matplotlib.pyplot as plt
 
 #Change directory (put the adress of wherever your example.txt is)
 #In doing so, copy adress as text then substitute \ for \\
-os.chdir("L:\\f.gallardo\\RobinJentner\\PythonHeatMaps\\Nanoindentation\\85577_100x20_Matrix\\txt Files")
+        # TODO: Make this directories and file more general as you can do multiple files        
+parser = argparse.ArgumentParser()
 
-#open and read file
-F= open("85577_All_Parameters.csv", "r") 
+parser.add_argument('path',nargs='+',
+                     help='path to the file')
+parser.add_argument('file',nargs='+',
+                     help='file containing the data')
+
+options = parser.parse_args()
+
+os.chdir(options.path[0])
+
 
 #declaring variables with values that will be eliminated *not important*
 A=[0]; B=[0]; C=[0]; Depth_max=[0]; Lasting_Depth=[0]; coefs_mean_dev=[0]; 
 max_radius=[0]; pos_max_radius=[0]; E_Modulus=[0]; H=[0]
 
 #read each line of .txt
+#open and read file
+F= open(options.file[0],"r")   
 for line in F:  
   #Let's split the line into an array called "data" using the " " as a separator (using a blanck space as a separator):
   data = line.split(",")
