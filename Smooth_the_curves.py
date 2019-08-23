@@ -20,9 +20,10 @@ class Smooth():
         self.window = window
         self.order  = order
         self.deriv  = deriv
+        self.dataset = dataset
 
     def get_smoothed(self):
-        smoothed_data = savgol(dataset, window, order,deriv_order)
+        smoothed_data = savgol(self.dataset, self.window, self.order,self.deriv)
         return smoothed_data
 
 class num_first_deriv():
