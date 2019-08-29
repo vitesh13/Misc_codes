@@ -28,7 +28,7 @@ os.chdir(options.path[0])
 
 #check the file type of the file (to decide the numpy handling)
 if os.path.splitext(options.file[0])[1] == '.txt':
-        data = np.loadtxt(options.file[0],skiprows=0) #this will create a numpy array of the whole data
+        data = np.loadtxt(options.file[0],skiprows=0) 
 elif os.path.splitext(options.file[0])[1] == '.csv':
         data = np.genfromtxt(options.file[0], delimiter=',')
 else:
@@ -37,7 +37,8 @@ else:
 hardness=[float(i) for i in H] # list of strings ('43.21') to floaters (43.21)
 numberInMatrix=list(range(2000))  # 0,1,2,3...1999
 
-#turn data into 2D array: 100 (yaxis) x 20(xaxis)
+#turn data into 2D array: 100 (yaxis) x 20(xaxis) #TODO: How is this grid size known? Is it described anywhere in the file?
+#Otherwise we can pass it as an argument at the start
 #this will plot the heatmap column by column (if that makes sense)
 dddata=np.column_stack((hardness[0:99],hardness[100:199],\
                              hardness[200:299],hardness[300:399],\
@@ -48,7 +49,7 @@ dddata=np.column_stack((hardness[0:99],hardness[100:199],\
                              hardness[1200:1299],hardness[1300:1399],\
                              hardness[1400:1499],hardness[1500:1599],\
                              hardness[1600:1699],hardness[1700:1799],\
-                             hardness[1800:1899],hardness[1900:1999]))
+                             hardness[1800:1899],hardness[1900:1999])) #replace with reshape if the size of map known
 
 def heatmap(dddata, ax=None,
             cbar_kw={}, cbarlabel="", **kwargs):
