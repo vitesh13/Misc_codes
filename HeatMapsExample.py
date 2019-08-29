@@ -26,9 +26,6 @@ options = parser.parse_args()
 
 os.chdir(options.path[0])
 
-#file types for which the code works
-file_types = ['.txt','.csv']  #maybe at some point we might add HDF5 as well?
-
 #check the file type of the file (to decide the numpy handling)
 if os.path.splitext(options.file[0])[1] == '.txt':
         data = np.loadtxt(options.file[0],skiprows=0) #this will create a numpy array of the whole data
