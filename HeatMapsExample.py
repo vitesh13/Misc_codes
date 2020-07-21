@@ -6,7 +6,7 @@ Created on Mon Aug 19 18:49:21 2019
 Create heatmaps =)
 """
 
-import os
+import os,sys
 import numpy as np
 import matplotlib
 import argparse
@@ -26,50 +26,19 @@ options = parser.parse_args()
 
 os.chdir(options.path[0])
 
-
-#declaring variables with values that will be eliminated *not important*
-A=[0]; B=[0]; C=[0]; Depth_max=[0]; Lasting_Depth=[0]; coefs_mean_dev=[0]; 
-max_radius=[0]; pos_max_radius=[0]; E_Modulus=[0]; H=[0]
-
-#read each line of .txt
-#open and read file
-F= open(options.file[0],"r")   
-for line in F:  
-  #Let's split the line into an array called "data" using the " " as a separator (using a blanck space as a separator):
-  data = line.split(",")
-  #and let's extract the data:
-  A.append(data[0]);
-  B.append(data[1]);
-  C.append(data[2]);
-  Depth_max.append(data[3]);
-  Lasting_Depth.append(data[4]);
-  coefs_mean_dev.append(data[5]);
-  max_radius.append(data[6]);
-  pos_max_radius.append(data[7]);
-  E_Modulus.append(data[8]);
-  H.append(data[9]);
-
-#eliminating data that we introduced at lines 22-23 and then the header of .txt, so we keep 
-#only the numerical values we need. *Again, not important*
-#whatever.pop(0) deletes the value at index 0(first one then) of whatever array
-A.pop(0);              A.pop(0);                  
-B.pop(0);              B.pop(0);
-C.pop(0);              C.pop(0);
-Depth_max.pop(0);      Depth_max.pop(0);
-Lasting_Depth.pop(0);  Lasting_Depth.pop(0);
-coefs_mean_dev.pop(0); coefs_mean_dev.pop(0);
-max_radius.pop(0);     max_radius.pop(0);
-pos_max_radius.pop(0); pos_max_radius.pop(0);
-E_Modulus.pop(0);      E_Modulus.pop(0);
-H.pop(0);              H.pop(0);
-
-#It is good practice to close the file at the end to free up resources   
-F.close()
+#check the file type of the file (to decide the numpy handling)
+if os.path.splitext(options.file[0])[1] == '.txt':
+        data = np.loadtxt(options.file[0],skiprows=0) 
+elif os.path.splitext(options.file[0])[1] == '.csv':
+        data = np.genfromtxt(options.file[0], delimiter=',')
+else:
+        sys.exit("Wrong file format of the data file")
 
 hardness=[float(i) for i in H] # list of strings ('43.21') to floaters (43.21)
 numberInMatrix=list(range(2000))  # 0,1,2,3...1999
 
-#turn data into 2D array: 100 (yaxis) x 20(xaxis)
+#turn data into 2D array: 100 (yaxis) x 20(xaxis) #TODO: How is this grid size known? Is it described anywhere in the file?
+#Otherwise we can pass it as an argument at the start
 #this will plot the heatmap column by column (if that makes sense)
 dddata=np.column_stack((hardness[0:99],hardness[100:199],\
                              hardness[200:299],hardness[300:399],\
@@ -80,7 +49,7 @@ dddata=np.column_stack((hardness[0:99],hardness[100:199],\
                              hardness[1200:1299],hardness[1300:1399],\
                              hardness[1400:1499],hardness[1500:1599],\
                              hardness[1600:1699],hardness[1700:1799],\
-                             hardness[1800:1899],hardness[1900:1999]))
+                             hardness[1800:1899],hardness[1900:1999])) #replace with reshape if the size of map known
 
 def heatmap(dddata, ax=None,
             cbar_kw={}, cbarlabel="", **kwargs):
